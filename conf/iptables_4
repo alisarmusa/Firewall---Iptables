@@ -1,0 +1,72 @@
+// CONFIGURATION LAN1
+
+lan1 = "192.168.14.0/24"
+google = "173.194.39.210"
+
+iptables --flush INPUT
+iptables --flush OUTPUT
+
+iptables --policy INPUT DROP
+iptables --policy OUTPUT DROP
+
+iptables -A OUTPUT -p tcp -s $lan1 -d $google -m state --state NEW, ESTABLISHED -j ACCEPT
+iptables -A INPUT -p tcp -s $google -d $lan1 -m state --state ESTABLISHED -j ACCEPT
+
+
+
+// CONFIGURATION LAN2
+
+lan2 = "192.168.6.0/24"
+google = "173.194.39.210"
+
+iptables --flush INPUT
+iptables --flush OUTPUT
+
+iptables --policy INPUT DROP
+iptables --policy OUTPUT DROP
+
+iptables -A OUTPUT -p tcp -s $lan2 -d $google -m state --state NEW, ESTABLISHED -j ACCEPT
+
+iptables -A INPUT -p tcp -s $google -d $lan2 -m state --state ESTABLISHED -j ACCEPT
+
+
+
+// CONFIGURATION GOOGLE
+
+lan1 = "192.168.14.0/24"
+lan2 = "192.168.6.0/24"
+google = "173.194.39.210"
+
+iptables --flush INPUT
+iptables --flush OUTPUT
+
+iptables --policy INPUT DROP
+iptables --policy OUTPUT DROP
+
+iptables -A OUTPUT -p tcp -s $google -d $lan1 -m state --state ESTABLISHED -j ACCEPT
+iptables -A INPUT -p tcp -s $lan1 -d $google -m state --state NEW, ESTABLISHED -j ACCEPT
+
+iptables -A OUTPUT -p tcp -s $google -d $lan2 -m state --state ESTABLISHED -j ACCEPT
+iptables -A INPUT -p tcp -s $lan2 -d $google -m state --state NEW, ESTABLISHED -j ACCEPT
+
+
+
+// CONFIGURATION FIREWALL
+
+lan1 = "192.168.14.0/24"
+lan2 = "192.168.6.0/24"
+google = "173.194.39.210"
+eth1 = "193.140.236.80"
+eth2 = "192.168.6.254"
+eth3 = "192.168.14.254"
+
+iptables --flush FORWARD
+iptables --policy FORWARD DROP
+
+iptables -A FORWARD -p tcp -i eth3 -o eth1 -s $lan1 -d $google -m state --state NEW, ESTABLISHED -j ACCEPT
+iptables -A FORWARD -p tcp -i eth1 -o eth3 -s $google -d $lan1 -m state --state ESTABLISHED -j ACCEPT
+
+iptables -A FORWARD -p tcp -i eth2 -o eth1 -s $lan2 -d $google -m state --state NEW, ESTABLISHED -j ACCEPT
+iptables -A FORWARD -p tcp -i eth1 -o eth2 -s $google -d $lan2 -m state --state ESTABLISHED -j ACCEPT
+
+

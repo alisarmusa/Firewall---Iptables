@@ -1,0 +1,46 @@
+//Configuration of lan1
+lan1="192.168.14.0"
+computer3="192.168.14.3"
+
+iptables --flush INPUT
+iptables --flush OUTPUT
+
+iptables --policy INPUT DROP
+iptables --policy OUTPUT DROP
+
+ipset -N lan1 hash:ip
+ipset -A lan1 $computer3
+
+iptables -A INPUT -p icmp --icmp-type 8 -s $computer3 -m set --match-set lan1 dst -j ACCEPT
+iptables -A OUTPUT -p icmp --icmp-type 0 -m set --match-set lan1 src -d $computer3 -j ACCEPT
+
+//Configuration of computer3
+lan1="192.168.14.0"
+computer3="192.168.14.3"
+
+iptables --flush INPUT
+iptables --flush OUTPUT
+
+iptables --policy INPUT DROP
+iptables --policy OUTPUT DROP
+
+ipset -N lan1 hash:ip
+ipset -A lan1 $computer3
+
+iptables -A INPUT -p icmp --icmp-type 8 -m set --match-set lan1 src -d $computer3 -j ACCEPT
+iptables -A OUTPUT -p icmp --icmp-type 0 -S $computer3 -m set --match-set lan1 dst -j ACCEPT
+
+//Configuration of firewall
+lan1="192.168.14.0"
+computer3="192.168.14.3"
+eth3="192.168.14.254"
+
+iptables --flush FORWARD
+iptables --policy FORWARD DROP
+
+ipset -N lan1 hash:ip 
+ipset -A lan1 $computer3
+
+iptables -A FORWARD -p icmp -i eth3 -o eth3 -s $computer3 -m set --match-set lan1 dst -j ACCEPT
+iptables -A FORWARD -p icmp -i eth3 -o eth3 -m set --match-set lan1 src -d $computer3 -j ACCEPT
+

@@ -1,0 +1,8 @@
+// CONFIGURATION FIREWALL
+webServer="192.168.1.2"
+
+iptables --flush FORWARD
+iptables --policy FORWARD DROP
+
+iptables -A FORWARD -p tcp --syn -d $webServer --dport 443 -m connlimit --connlimit-above 7 -j DROP
+iptables -A FORWARD -p tcp -d $webServer --dport 443 -j ACCEPT

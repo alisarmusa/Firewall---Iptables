@@ -1,0 +1,106 @@
+//CONFIGURATION OF Remote Pc
+
+remotePc = "93.101.30.55"
+eth0= "192.168.1.254"
+eth1 = "193.140.236.80"
+
+webServer = "192.168.1.2"
+emailServer = "192.168.1.3"
+
+iptables --flush INPUT
+iptables --flush OUTPUT
+
+iptables --policy INPUT DROP
+iptables --policy OUTPUT DROP
+
+iptables -t filter -A OUTPUT -p icmp --icmp-type 8 -s $remotePc -d $webServer -m state --state -j ACCEPT
+iptables -t filter -A INPUT -p icmp --icmp-type 8 -s $webServer -d $remotePc -m state --state -j ACCEPT
+
+//CONFIGURATION OF Web Server
+
+remotePc = "93.101.30.55"
+eth0= "192.168.1.254"
+eth1 = "193.140.236.80"
+
+webServer = "192.168.1.2"
+emailServer = "192.168.1.3"
+
+iptables --flush INPUT
+iptables --flush OUTPUT
+
+iptables --policy INPUT DROP
+iptables --policy OUTPUT DROP
+
+iptables -t filter -A INPUT -p icmp --icmp-type 8 -s $remotePc -d $webServer -j ACCEPT
+iptables -t filter -A OUTPUT -p icmp --icmp-type 0 -s $webServer -d $remotePc -j ACCEPT
+
+//CONFIGURATION OF FIREWALL
+
+remotePc = "93.101.30.55"
+eth0= "192.168.1.254"
+eth1 = "193.140.236.80"
+
+webServer = "192.168.1.2"
+emailServer = "192.168.1.3"
+
+iptables --flush FORWARD
+iptables --policy FORWARD DROP
+
+iptables -A FORWARD -p icmp -i eth1 -o eth0 -s $remotePc -d $webServer -j ACCEPT
+iptables -A FORWARD -p icmp -i eth1 -o eth0 -s $webServer -d $remotePc -j ACCEPT
+
+
+
+//CONFIGURATION OF Remote Pc
+
+remotePc = "93.101.30.55"
+eth0= "192.168.1.254"
+eth1 = "193.140.236.80"
+
+webServer = "192.168.1.2"
+emailServer = "192.168.1.3"
+
+iptables --flush INPUT
+iptables --flush OUTPUT
+
+iptables --policy INPUT DROP
+iptables --policy OUTPUT DROP
+
+iptables -t filter -A OUTPUT -p icmp --icmp-type 8 -s $remotePc -d $emailServer -m state --state -j ACCEPT
+iptables -t filter -A INPUT -p icmp --icmp-type 8 -s $emailServer -d $remotePc -m state --state -j ACCEPT
+
+//CONFIGURATION OF Email Server
+
+remotePc = "93.101.30.55"
+eth0= "192.168.1.254"
+eth1 = "193.140.236.80"
+
+webServer = "192.168.1.2"
+emailServer = "192.168.1.3"
+
+iptables --flush INPUT
+iptables --flush OUTPUT
+
+iptables --policy INPUT DROP
+iptables --policy OUTPUT DROP
+
+iptables -t filter -A INPUT -p icmp --icmp-type 8 -s $remotePc -d $emailServer -j ACCEPT
+iptables -t filter -A OUTPUT -p icmp --icmp-type 0 -s $emailServer -d $remotePc -j ACCEPT
+
+//CONFIGURATION OF FIREWALL
+
+remotePc = "93.101.30.55"
+eth0= "192.168.1.254"
+eth1 = "193.140.236.80"
+
+webServer = "192.168.1.2"
+emailServer = "192.168.1.3"
+
+iptables --flush FORWARD
+iptables --policy FORWARD DROP
+
+iptables -A FORWARD -p icmp -i eth1 -o eth0 -s $remotePc -d $emailServer -j ACCEPT
+iptables -A FORWARD -p icmp -i eth1 -o eth0 -s $emailServer -d $remotePc -j ACCEPT
+
+iptables -A FORWARD -p icmp -i eth1 -o eth0 -s $remotePc -d $emailServer -j ACCEPT
+iptables -A FORWARD -p icmp -i eth1 -o eth0 -s $emailServer -d $remotePc -j ACCEPT

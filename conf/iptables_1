@@ -1,0 +1,37 @@
+//Configuration of computer1
+computer3="192.168.14.3"
+computer1="192.168.6.1"
+
+iptables --flush INPUT
+iptables --flush OUTPUT
+
+iptables --policy INPUT DROP
+iptables --policy OUTPUT DROP
+
+iptables -t filter -A OUTPUT -p icmp --icmp-type 8 -s $computer1 -d $computer3 -m state --state -j ACCEPT
+iptables -t filter -A INPUT -p icmp --icmp-type 8 -s $computer3 -d $computer1 -m state --state -j ACCEPT
+
+//Configuration of computer3
+computer3="192.168.14.3"
+computer1="192.168.6.1"
+
+iptables --flush INPUT
+iptables --flush OUTPUT
+
+iptables --policy INPUT DROP
+iptables --policy OUTPUT DROP
+
+iptables -t filter -A INPUT -p icmp --icmp-type 8 -s $computer1 -d $computer3 -j ACCEPT
+iptables -t filter -A OUTPUT -p icmp --icmp-type 0 -s $computer3 -d $computer1 -j ACCEPT
+
+//Configuration of firewall
+computer3="192.168.14.3"
+computer1="192.168.6.1"
+eth2="192.168.6.254"
+eth3="192.168.14.254"
+
+iptables --flush FORWARD
+iptables --policy FORWARD DROP
+
+iptables -A FORWARD -p icmp -i eth2 -o eth3 -s $computer1 -d $computer3 -j ACCEPT
+iptables -A FORWARD -p icmp -i eth3 -o eth2 -s $computer3 -d $computer1 -j ACCEPT

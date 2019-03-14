@@ -1,0 +1,19 @@
+// Configure Firewall
+
+iptables --flush INPUT
+iptables --flush OUTPUT
+iptables -t nat --flush PREROUTING
+
+iptables --policy INPUT DROP
+iptables --policy OUTPUT DROP
+iptables -t nat PREROUTING DROP
+
+iptables -A INPUT -m tcp -p tcp --dport 24 -m state --state NEW  -j ACCEPT
+iptables -A INPUT -m tcp -p tcp --dport 40000 -m state --state NEW  -j ACCEPT
+
+iptables -A OUTPUT -m tcp -p tcp --sport 24 -m state --state ESTABLISHED -j ACCEPT
+iptables -A OUTPUT -m tcp -p tcp --sport 40000 -m state --state ESTABLISHED  -j ACCEPT
+
+iptables -t nat -A PREROUTING -p tcp -s 193.140.236.80 -d 192.168.1.2 --dport 24 -j DNAT --to 192.168.1.2:24
+iptables -t nat -A PREROUTING -p tcp -s 193.140.236.80 -d 192.168.1.2 --dport 40000 -j DNAT --to 192.168.1.2:40000
+
